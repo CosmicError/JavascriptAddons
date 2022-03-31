@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         SchoologyHome-Assignments
+// @name         [Schoology] Home-Assignments
 // @namespace    http://tampermonkey.net/
 // @version      1.2.4
 // @description  Sort Overdue and Upcoming Assignments by class -> date
@@ -8,6 +8,7 @@
 // @match        *://*.schoology.com/home
 // @match        *://*.schoology.com/home/recent-activity
 // @match        *://*.schoology.com/home/course-dashboard
+// @updateURL    https://raw.githubusercontent.com/CosmicError/bK6Ll2xXeAO/main/%5BSchoology%5D%20Home-Assignments.js
 // @grant        none
 // ==/UserScript==
 
