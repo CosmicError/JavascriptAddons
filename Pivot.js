@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pivot
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  try to take over the world!
 // @author       Anonymous
 // @match        https://app.pivotinteractives.com/assignments/*
@@ -14,6 +14,7 @@
     'use strict';
     let allowedQuestionTypes = ["MultipleChoiceQuestion", "NumericalQuestion", "GridGraphQuestion"]
     let multipleChoice = ["A", "B", "C", "D", "E", "F", "G"]
+
     async function getData() {
         let webResponseResponse = await fetch("https://api.pivotinteractives.com/api/v3/assignments/" + document.URL.split("/")[4] + "/response?_xff=editor", {
             "headers": {
@@ -58,8 +59,14 @@
         let sections = activityData.sections;
         // run though all the different lab sections
         for (let i = 0; i < sections.length; i++) {
-            //create new answer group for section
-            console.group(sections[i].name)
+            // make sure there are allowed questions in the target section (so no empty sections)
+            for (let x = 0; x < sections[i].components.length; x++) {
+                if (allowedQuestionTypes.includes(sections[i].components[x].componentType)) {
+                    //create new answer group for section
+                    console.group(sections[i].name)
+                    break
+                };
+            };
             // run through all the components of the lab section
             for (let x = 0; x < sections[i].components.length; x++) {
                 //check for question type and handle approprietly
@@ -107,21 +114,28 @@
                     // make sure the table has an answer
                     if (sections[i].components[x].answer) {
                         let answer = JSON.parse(sections[i].components[x].answer);
-                        // create new question group so all tables are grouped under the same question
-                        console.groupCollapsed("Question "+x+"; Table:")
-                        // run through all the correct table answers
+                        // run through all the correct table answers and make sure they have stuff in em
                         for (let y = 0; y < answer.columns.length; y++) {
                             let Data = answer.columns[y].data
-                            // make sure the tables aren't empty, if they are then remove them if possible
                             if (Data.toString().trim() != ','.repeat(answer.columns[y].data.length-1)) {
-                                // Group the table
-                                console.groupCollapsed("Column "+y+" Data ["+answer.columns[y].name+" ("+answer.columns[y].units+")]");
-                                console.table(Data)
-                                console.groupEnd("Column "+y+" Data ["+answer.columns[y].name+" ("+answer.columns[y].units+")]");
+                                // create new question group so all tables are grouped under the same question
+                                console.groupCollapsed("Question "+x+"; Table:")
+                                // run through all the correct table answers
+                                for (let z = 0; z < answer.columns.length; z++) {
+                                    let Data = answer.columns[z].data
+                                    // make sure the tables aren't empty, if they are then remove them if possible
+                                    if (Data.toString().trim() != ','.repeat(answer.columns[z].data.length-1)) {
+                                        // Group the table
+                                        console.groupCollapsed("Column "+z+" Data ["+answer.columns[z].name+" ("+answer.columns[z].units+")]");
+                                        console.table(Data)
+                                        console.groupEnd("Column "+z+" Data ["+answer.columns[z].name+" ("+answer.columns[z].units+")]");
+                                    };
+                                };
+                                // Close question group
+                                console.groupEnd("Question "+x)
+                                break
                             };
                         };
-                        // CLose question group
-                        console.groupEnd("Question "+x)
                     };
                 };
             };
