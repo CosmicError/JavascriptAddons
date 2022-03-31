@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Pivot
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  try to take over the world!
 // @author       Anonymous
 // @match        https://app.pivotinteractives.com/assignments/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @downloadURL  https://raw.githubusercontent.com/CosmicError/bK6Ll2xXeAO/main/Pivot.js
 // @grant        none
 // ==/UserScript==
 
