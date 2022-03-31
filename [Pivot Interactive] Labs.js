@@ -6,7 +6,7 @@
 // @author       Anonymous
 // @match        https://app.pivotinteractives.com/assignments/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-// @downloadURL  https://raw.githubusercontent.com/CosmicError/bK6Ll2xXeAO/main/Pivot.js
+// @updateURL    https://raw.githubusercontent.com/CosmicError/bK6Ll2xXeAO/main/%5BPivot%20Interactive%5D%20Labs.js
 // @grant        none
 // ==/UserScript==
 
