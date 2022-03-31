@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      1.2
 // @description  try to take over the world!
-// @author       Anonymous
+// @author       Jack
 // @match        https://app.pivotinteractives.com/assignments/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @updateURL    https://raw.githubusercontent.com/CosmicError/bK6Ll2xXeAO/main/%5BPivot%20Interactive%5D%20Labs.js
