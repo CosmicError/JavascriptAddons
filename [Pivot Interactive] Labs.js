@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Pivot
+// @name         [Pivot Interactive] Labs
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  try to take over the world!
 // @author       Jack
 // @match        https://app.pivotinteractives.com/assignments/*
@@ -10,10 +10,11 @@
 // @grant        none
 // ==/UserScript==
 
+'use strict';
 (function() {
-    'use strict';
     let allowedQuestionTypes = ["MultipleChoiceQuestion", "NumericalQuestion", "GridGraphQuestion"]
     let multipleChoice = ["A", "B", "C", "D", "E", "F", "G"]
+    let trial = null
 
     async function getData() {
         let webResponseResponse = await fetch("https://api.pivotinteractives.com/api/v3/assignments/" + document.URL.split("/")[4] + "/response?_xff=editor", {
@@ -34,7 +35,7 @@
             "mode": "cors",
             "credentials": "include"
         });
-        // wait for the feth to finish, then convert to json
+        // wait for the fetch to finish, then convert to json
         let responseData = await webResponseResponse.json();
         let webResponseActivity = await fetch("https://api.pivotinteractives.com/api/v3/assignments/" + document.URL.split("/")[4] + "/activity?_xff=editor", {
             "headers": {
@@ -54,7 +55,7 @@
             "mode": "cors",
             "credentials": "include"
         });
-        // wait for the feth to finish, then convert to json
+        // wait for the fetch to finish, then convert to json
         let activityData = await webResponseActivity.json();
         let sections = activityData.sections;
         // run though all the different lab sections
@@ -63,7 +64,11 @@
             for (let x = 0; x < sections[i].components.length; x++) {
                 if (allowedQuestionTypes.includes(sections[i].components[x].componentType)) {
                     //create new answer group for section
-                    console.group(sections[i].name)
+                    if (i == 0) {
+                        console.group(sections[i].name)
+                    } else {
+                        console.groupCollapsed(sections[i].name)
+                    }
                     break
                 };
             };
@@ -87,6 +92,14 @@
                             let answer = sections[i].components[x].conditions[y].condition;
                             if (sections[i].components[x].conditions[y].condition.includes("==")) {
                                 answer = sections[i].components[x].conditions[y].condition.split("==")[1];
+                                if (!trial) {
+                                    for (let a = 0; a < responseData.variables.length; a++) {
+                                        if (sections[i].components[x].conditions[y].condition.split("==")[0].includes(responseData.variables[a].id)) {
+                                            trial = responseData.variables[a].value
+                                        };
+                                    };
+
+                                };
                             };
                             // make sure varibles exist otherwise if they dont then it will error
                             if (activityData.variables.length > 0) {
@@ -95,17 +108,32 @@
                                     if (answer.includes(activityData.variables[a].id)) {
                                         // Remove irrelevant characters
                                         answer = answer.replace("$", "");
-                                        answer = answer.replace(activityData.variables[a].id, activityData.variables[a].name);
+                                        if (/^\d*\^?\d*\.?\d+$/.test(responseData.variables[a].value)) {
+                                            answer = answer.replace(activityData.variables[a].id, responseData.variables[a].value);
+                                        } else {
+                                            answer = answer.replace(activityData.variables[a].id, activityData.variables[a].name);
+                                        };
                                     };
                                 };
                             };
                             // if the answer is specific to a certain trial, then make sure it is the trial assigned to the user
                             if (answer.includes("?")) {
-                                if (answer.split("?")[0] == responseData.variables[1].value) {
-                                    console.log("Question "+x+"; Answer: "+answer.split("?")[1].split(":")[0]);
+                                if (answer.split("?")[0] == trial) {
+                                    answer = answer.split("?")[1].split(":")[0]
+                                    if (/[^a-z]*[^A-Z]*[-+*\/()]*[0-9]+/.test(answer)) {
+                                        //cyber security risk but im too lazy to find another way (int overflow attack)
+                                        // + is to get rid of trailing 0's
+                                        answer = +parseFloat(eval(answer.replace("^", "**"))).toFixed(3)
+                                    };
+                                    console.log("Question "+x+"; Answer: "+answer);
                                 };
                             // if the answer is not specific to a certain trial, then just print the answer as long as its correct
                             } else {
+                                if (/[^a-z]*[^A-Z]*[-+*\/()]*[0-9]+/.test(answer)) {
+                                    //cyber security risk but im too lazy to find another way (int overflow attack)
+                                    // + is to get rid of trailing 0's
+                                    answer = +parseFloat(eval(answer.replace("^", "**"))).toFixed(3)
+                                };
                                 console.log("Question "+x+"; Answer: "+answer);
                             };
                         };
@@ -124,11 +152,12 @@
                                 for (let z = 0; z < answer.columns.length; z++) {
                                     let Data = answer.columns[z].data
                                     // make sure the tables aren't empty, if they are then remove them if possible
-                                    if (Data.toString().trim() != ','.repeat(answer.columns[z].data.length-1)) {
+                                    if (Data.toString().trim() != ','.repeat(answer.columns[z].data.length-1)) { // && answer.columns[z].name.includes()
                                         // Group the table
-                                        console.groupCollapsed("Column "+z+" Data ["+answer.columns[z].name+" ("+answer.columns[z].units+")]");
+                                        let group = "Column "+z+" Data ["+answer.columns[z].name+" ("+answer.columns[z].units+", "+answer.columns[z].variable+")]"
+                                        console.groupCollapsed(group);
                                         console.table(Data)
-                                        console.groupEnd("Column "+z+" Data ["+answer.columns[z].name+" ("+answer.columns[z].units+")]");
+                                        console.groupEnd(group);
                                     };
                                 };
                                 // Close question group
