@@ -5,6 +5,7 @@
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.youtube.com
+// @match        https://www.youtube.com/shorts/*
 // @match        https://www.youtube.com/watch?v=*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @grant        none
@@ -12,6 +13,10 @@
 
 (function() {
     'use strict';
+
+    if (window.location.href.search('https://www.youtube.com/shorts') != -1) {
+        window.location.replace('https://www.youtube.com')
+    }
 
     function searchAndRemove() {
         let shorts_button = document.querySelector("#items > ytd-guide-entry-renderer:nth-child(2)")
