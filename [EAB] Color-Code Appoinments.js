@@ -87,7 +87,7 @@
             let { startTime, endTime } = parsedTimeRange;
             let duration = (endTime - startTime) / (1000 * 60);
 
-            if (duration < minTime || duration > maxTime) {
+            if (duration < minTime || duration > maxTime || appointment.querySelector("td:nth-child(8)").textContent == 'Not Yet.\n') {
                 appointment.style.color = "red";
                 appointment.style.fontWeight = "bold";
             } else {
