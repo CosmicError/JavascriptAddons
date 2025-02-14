@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Color Code Appointment Dates
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-07
+// @version      2025-02-14
 // @description  try to take over the world!
 // @author       You
 // @match        https://kennesaw.campus.eab.com/home/staff
@@ -12,6 +12,7 @@
 (function() {
     const minTime = 10;
     const maxTime = 30;
+    const goldenPeople = [];
 
     'use strict';
 
@@ -90,6 +91,11 @@
             if (duration < minTime || duration > maxTime || appointment.querySelector("td:nth-child(8)").textContent == 'Not Yet.\n') {
                 appointment.style.color = "red";
                 appointment.style.fontWeight = "bold";
+
+            } else if (goldenPeople.includes(appointment.querySelector("td:nth-child(7)").textContent.split("\n")[0])) {
+                appointment.style.color = "#DBB313";
+                appointment.style.fontWeight = "bold";
+
             } else {
                 appointment.style.color = "black";
                 appointment.style.fontWeight = "normal";
@@ -117,11 +123,16 @@
                 return;
             }
 
-            if (appointmentDate === todayFormatted) {
-                appointment.style.color = "#00A36C";
-                appointment.style.fontWeight = "bold";
-            } else {
+            if (appointmentDate !== todayFormatted) {
                 appointment.style.color = "red";
+                appointment.style.fontWeight = "bold";
+
+            } else if (goldenPeople.includes(appointment.querySelector("td:nth-child(4)").textContent.split("\n")[0])) {
+                appointment.style.color = "#DBB313";
+                appointment.style.fontWeight = "bold";
+
+            } else if (appointmentDate === todayFormatted) {
+                appointment.style.color = "#00A36C";
                 appointment.style.fontWeight = "bold";
             }
         });
@@ -140,7 +151,6 @@
         );
 
         if (shouldUpdate) {
-            console.log("Detected change, re-running highlighting.");
             runHighlighting();
         }
     });
