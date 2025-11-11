@@ -4,7 +4,7 @@
 // @version      2025-02-07
 // @description  Highlight upcoming and recent appointments to better draw attention to issues and important events
 // @author       Jack V
-// @match        https://kennesaw.campus.eab.com/home/staff#?tab-state=appointments_tab
+// @match        https://kennesaw.campus.eab.com/home/staff
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=eab.com
 // @grant        none
 // @downloadURL  https://raw.githubusercontent.com/CosmicError/JavascriptAddons/refs/heads/main/%5BEAB%5D%20Color-Code%20Appoinments.js
