@@ -24,9 +24,9 @@
         virtualBGColor: "#f4eeff",
         virtualBorderWidth: 2,
 
-        tomorrowMainColor: "yellow",
-        tomorrowBGColor: "#fffeeeff",
-        tomorrowBorderWidth: 2,
+        tomorrowMainColor: "#dda937ff",
+        // tomorrowBGColor: "#fffeeeff",
+        // tomorrowBorderWidth: 2,
 
         anotherDayMainColor: "red",
         // anotherDayBGColor: "#ffeeee",
@@ -160,12 +160,14 @@
                 return;
             }
 
-            if (this.startTime > now) {
+            const dayDiff = (this.dateObj - now) / (1000 * 60 * 60 * 24);
+
+            if (dayDiff >= 1 && dayDiff < 2) {
                 this.applyStyle({
                     color: config.tomorrowMainColor,
                     bold: true,
-                    bgColor: config.tomorrowBGColor,
-                    outline: `${config.tomorrowBorderWidth}px solid ${config.tomorrowMainColor}`,
+                    // bgColor: config.tomorrowBGColor,
+                    // outline: `${config.tomorrowBorderWidth}px solid ${config.tomorrowMainColor}`,
                 });
                 return;
             } else {
