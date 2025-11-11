@@ -16,18 +16,20 @@
         minAppointmentTime: 15,
         maxAppointmentTime: 30,
 
-        inpersonMainColor: "#00A36C", // green
+        inpersonMainColor: "#00A36C",
         inpersonBGColor: "#f0f9f5",
         inpersonBorderWidth: 2,
 
-        virtualMainColor: "#505AC9", // blue
+        virtualMainColor: "#505AC9",
         virtualBGColor: "#f4eeff",
         virtualBorderWidth: 2,
 
-        tomorrowMainColor: "#dda937ff",
+        tomorrowEnabled: false,
+        tomorrowMainColor: "#fc6a03",
         // tomorrowBGColor: "#fffeeeff",
         // tomorrowBorderWidth: 2,
 
+        anotherDayEnabled: true,
         anotherDayMainColor: "red",
         // anotherDayBGColor: "#ffeeee",
         // anotherDayBorderWidth: 2,
@@ -160,9 +162,8 @@
                 return;
             }
 
-            const dayDiff = (this.dateObj - now) / (1000 * 60 * 60 * 24);
-
-            if (dayDiff >= 1 && dayDiff < 2) {
+            if (new Date(this.dateObj.getFullYear(), this.dateObj.getMonth(), this.dateObj.getDate()).getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() && config.tomorrowEnabled)
+            {
                 this.applyStyle({
                     color: config.tomorrowMainColor,
                     bold: true,
@@ -170,14 +171,18 @@
                     // outline: `${config.tomorrowBorderWidth}px solid ${config.tomorrowMainColor}`,
                 });
                 return;
-            } else {
-                this.applyStyle({
-                    color: config.anotherDayMainColor,
-                    bold: true,
-                    // bgColor: config.anotherDayBGColor,
-                    // outline: `${config.anotherDayBorderWidth}px solid ${config.anotherDayMainColor}`,
-                });
             }
+
+            if (!config.anotherDayEnabled) {
+                return;
+            }
+
+            this.applyStyle({
+                color: config.anotherDayMainColor,
+                bold: true,
+                // bgColor: config.anotherDayBGColor,
+                // outline: `${config.anotherDayBorderWidth}px solid ${config.anotherDayMainColor}`,
+            });
         }
     }
 
