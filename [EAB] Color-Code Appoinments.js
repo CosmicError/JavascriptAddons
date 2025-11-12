@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Color Code Appointment Dates
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-07
+// @version      2025-11-12
 // @description  Highlight upcoming and recent appointments to better draw attention to issues and important events
 // @author       Jack V
 // @match        https://kennesaw.campus.eab.com/home/staff
@@ -13,14 +13,16 @@
 
 (function () {
     const config = {
+        updateCooldown: 1000 * 60 * 5, // 5 minutes
+
         minAppointmentTime: 15,
         maxAppointmentTime: 30,
 
-        inpersonMainColor: "#00A36C",
+        inpersonMainColor: "#00A36C", // green
         inpersonBGColor: "#f0f9f5",
         inpersonBorderWidth: 2,
 
-        virtualMainColor: "#505AC9",
+        virtualMainColor: "#505AC9", // blue
         virtualBGColor: "#f4eeff",
         virtualBorderWidth: 2,
 
@@ -162,8 +164,7 @@
                 return;
             }
 
-            if (new Date(this.dateObj.getFullYear(), this.dateObj.getMonth(), this.dateObj.getDate()).getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() && config.tomorrowEnabled)
-            {
+            if (new Date(this.dateObj.getFullYear(), this.dateObj.getMonth(), this.dateObj.getDate()).getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() && config.tomorrowEnabled) {
                 this.applyStyle({
                     color: config.tomorrowMainColor,
                     bold: true,
@@ -244,17 +245,29 @@
             });
     }
 
-    // Initial run
-    highlightAll();
+    let lastUpdateTime = 0; // tracks last highlight timestamp
 
+    function updateHighlights(force = false) {
+        const now = Date.now();
+
+        // first run OR forced OR enough time elapsed since last update
+        if (force || now - lastUpdateTime >= config.updateCooldown) {
+            console.log(`highlighting - ${now / 1000}`);
+            highlightAll();
+            lastUpdateTime = now;
+        }
+    }
+
+    updateHighlights(true);
+
+    // === OBSERVER (always updates on change, bypasses cooldown) ===
     const observer = new MutationObserver((mutations) => {
-        // Check if appointments tables were changed
         const changed = mutations.some((m) =>
             m.target.closest?.("#upcoming_appointments, #recent_appointments")
         );
 
         if (changed) {
-            highlightAll();
+            updateHighlights(true); // force update
         }
     });
 
@@ -264,7 +277,6 @@
         characterData: true,
     });
 
-    // DEBUG
-    // window.AppointmentObserver = observer;
-    // window.highlightAllAppointments = highlightAll;
+    // === PERIODIC CHECK (only updates if 5 min since last update) ===
+    setInterval(() => updateHighlights(false), 1000 * 60);
 })();
