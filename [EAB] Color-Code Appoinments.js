@@ -252,7 +252,6 @@
 
         // first run OR forced OR enough time elapsed since last update
         if (force || now - lastUpdateTime >= config.updateCooldown) {
-            console.log(`highlighting - ${now / 1000}`);
             highlightAll();
             lastUpdateTime = now;
         }
