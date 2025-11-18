@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Color Code Appointment Dates
 // @namespace    http://tampermonkey.net/
-// @version      2025-11-12
+// @version      2025-11-18
 // @description  Highlight upcoming and recent appointments to better draw attention to issues and important events
 // @author       Jack V
 // @match        https://kennesaw.campus.eab.com/home/staff
