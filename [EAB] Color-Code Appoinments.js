@@ -206,11 +206,11 @@
         }
 
         highlight() {
-            if (this.duration === null && this.cells[8].textContent != 'Not Yet.\n') {
+            if (this.duration === null && this.cells[7].textContent != 'Not Yet.\n') {
                 return;
             }
 
-            if (this.duration >= config.minAppointmentTime && this.duration <= config.maxAppointmentTime && this.cells[8].textContent != 'Not Yet.\n') {
+            if (this.duration >= config.minAppointmentTime && this.duration <= config.maxAppointmentTime && this.cells[7].textContent != 'Not Yet.\n') {
                 return;
             }
 
