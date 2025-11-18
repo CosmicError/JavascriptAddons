@@ -38,7 +38,7 @@
 
         setupErrorMainColor: "red",
         setupErrorBGColor: "#ffeeee",
-        setupErrorBorderWidth: 2,
+        setupErrorBorderWidth: 1,
     };
 
     class BaseAppointment {
